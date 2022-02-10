@@ -7,22 +7,20 @@ const userInput = document.getElementById('search');
 const displayCity = document.querySelector('.city-name');
 const displayTemp = document.querySelector('.city-temp');
 
-let API = `https://api.opencagedata.com/geocode/v1/json?key=${geocodeKey}&q=london`;
+let API = `https://api.opencagedata.com/geocode/v1/json?key=${geocodeKey}&q=${userInput.value}`;
 
-async function getCityCoords() {
-  try {
-    const response = await fetch(API);
-    const data = await response.json();
-    createWeatherData(
-      data.results[0].geometry.lat,
-      data.results[0].geometry.lng
-    );
-    console.log(data);
-    console.log(data.results[0].geometry.lat);
-    console.log(data.results[0].geometry.lng);
-  } catch (err) {
-    console.log(err);
-  }
+function displayCityName(cityName) {
+  displayCity.innerHTML = cityName;
+}
+
+function getCity(data) {
+  const city = data.timezone.replace('Europe/', '');
+  displayCityName(city);
+}
+
+function displayCityTemp(data) {
+  displayTemp.innerHTML = `${Math.round(data.daily[0].temp.day)}°`;
+  console.log(data.daily[0].temp.day);
 }
 
 function createWeatherData(lat, lon) {
@@ -41,18 +39,20 @@ function createWeatherData(lat, lon) {
   getWeatherData();
 }
 
-function getCity(data) {
-  const city = data.timezone.replace('Europe/', '');
-  displayCityName(city);
-}
-
-function displayCityName(cityName) {
-  displayCity.innerHTML = cityName;
-}
-
-function displayCityTemp(data) {
-  displayTemp.innerHTML = `${Math.round(data.daily[0].temp.day)}°`;
-  console.log(data.daily[0].temp.day);
+async function getCityCoords() {
+  try {
+    const response = await fetch(API);
+    const data = await response.json();
+    createWeatherData(
+      data.results[0].geometry.lat,
+      data.results[0].geometry.lng
+    );
+    console.log(data);
+    console.log(data.results[0].geometry.lat);
+    console.log(data.results[0].geometry.lng);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function pushDataToArr(data, city, temp) {
