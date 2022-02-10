@@ -1,5 +1,5 @@
-const key = 'b34546a544f44c3e49b6ff1cbab1258c';
-const geocodeKey = '142d59a6d775429a86132d2461adb2ab';
+const key = 'key';
+const geocodeKey = 'key';
 const lang = 'en';
 const units = 'metric';
 const userInput = document.getElementById('search');
