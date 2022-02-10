@@ -1,13 +1,11 @@
 const key = 'key';
-const geocodeKey = 'key';
 const lang = 'en';
 const units = 'metric';
 const userInput = document.getElementById('search');
 
 const displayCity = document.querySelector('.city-name');
 const displayTemp = document.querySelector('.city-temp');
-
-let API = `https://api.opencagedata.com/geocode/v1/json?key=${geocodeKey}&q=${userInput.value}`;
+const errorMsg = document.querySelector('.error');
 
 function displayCityName(cityName) {
   displayCity.innerHTML = cityName;
@@ -20,11 +18,10 @@ function getCity(data) {
 
 function displayCityTemp(data) {
   displayTemp.innerHTML = `${Math.round(data.daily[0].temp.day)}°`;
-  console.log(data.daily[0].temp.day);
 }
 
 function createWeatherData(lat, lon) {
-  let weatherData = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=${units}&lang=${lang}`;
+  const weatherData = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=${units}&lang=${lang}`;
 
   async function getWeatherData() {
     try {
@@ -33,7 +30,7 @@ function createWeatherData(lat, lon) {
       getCity(data);
       displayCityTemp(data);
     } catch (err) {
-      console.log(err);
+      errorMsg.innerHTML = `Something went wrong, please try again.`;
     }
   }
   getWeatherData();
@@ -41,23 +38,21 @@ function createWeatherData(lat, lon) {
 
 async function getCityCoords() {
   try {
-    const response = await fetch(API);
+    const API2 = `https://nominatim.openstreetmap.org/?addressdetails=1&q=${userInput.value}&format=json&limit=1`;
+    const response = await fetch(API2);
     const data = await response.json();
+    console.log(data[0].lat);
+    console.log(data[0].lon);
     createWeatherData(
-      data.results[0].geometry.lat,
-      data.results[0].geometry.lng
+      data[0].lat,
+      data[0].lon
     );
-    console.log(data);
-    console.log(data.results[0].geometry.lat);
-    console.log(data.results[0].geometry.lng);
+    errorMsg.innerHTML = '';
+    userInput.value = '';
   } catch (err) {
+    errorMsg.innerHTML = `Something went wrong, please try again.`;
+    displayCity.innerHTML = '';
+    displayTemp.innerHTML = '';
     console.log(err);
   }
-}
-
-function pushDataToArr(data, city, temp) {
-  data.push({
-    city: city,
-    temp: temp,
-  });
 }
