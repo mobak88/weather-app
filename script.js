@@ -1,13 +1,13 @@
-const key = 'key';
-const geocodeKey = 'key';
+const key = 'b34546a544f44c3e49b6ff1cbab1258c';
+const geocodeKey = '142d59a6d775429a86132d2461adb2ab';
 const lang = 'en';
 const units = 'metric';
-let userInput = document.getElementById('search');
+const userInput = document.getElementById('search');
 
 const displayCity = document.querySelector('.city-name');
-let displayTemp = document.querySelector('.city-temp');
+const displayTemp = document.querySelector('.city-temp');
 
-let API = `https://api.opencagedata.com/geocode/v1/json?key=${geocodeKey}&q=oslo}`;
+let API = `https://api.opencagedata.com/geocode/v1/json?key=${geocodeKey}&q=london`;
 
 async function getCityCoords() {
   try {
