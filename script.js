@@ -1,4 +1,5 @@
-const key = 'key';
+import { API } from './env';
+
 const lang = 'en';
 const units = 'metric';
 const userInput = document.getElementById('search');
@@ -17,11 +18,14 @@ function getCity(data) {
 }
 
 function displayCityTemp(data) {
-  displayTemp.innerHTML = `${Math.round(data.daily[0].temp.day)}°`;
+  displayTemp.innerHTML = '';
+  data.daily.forEach((day) => {
+    displayTemp.innerHTML += `<p>Day ${data.daily.indexOf(day) + 1}: ${Math.round(day.temp.day)}°</p>`;
+  });
 }
 
 function createWeatherData(lat, lon) {
-  const weatherData = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=${units}&lang=${lang}`;
+  const weatherData = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${API}&units=${units}&lang=${lang}`;
 
   async function getWeatherData() {
     try {
@@ -29,6 +33,7 @@ function createWeatherData(lat, lon) {
       const data = await response.json();
       getCity(data);
       displayCityTemp(data);
+      console.log(data);
     } catch (err) {
       errorMsg.innerHTML = `Something went wrong, please try again.`;
     }
@@ -38,8 +43,8 @@ function createWeatherData(lat, lon) {
 
 async function getCityCoords() {
   try {
-    const API2 = `https://nominatim.openstreetmap.org/?addressdetails=1&q=${userInput.value}&format=json&limit=1`;
-    const response = await fetch(API2);
+    const API = `https://nominatim.openstreetmap.org/?addressdetails=1&q=${userInput.value}&format=json&limit=1`;
+    const response = await fetch(API);
     const data = await response.json();
     console.log(data[0].lat);
     console.log(data[0].lon);
@@ -50,9 +55,21 @@ async function getCityCoords() {
     errorMsg.innerHTML = '';
     userInput.value = '';
   } catch (err) {
-    errorMsg.innerHTML = `Something went wrong, please try again.`;
+    if (userInput.value === '') {
+      errorMsg.innerHTML = `Please type in a keyword`;
+    } else {
+      errorMsg.innerHTML = `Something went wrong, please try again.`;
+    }
+
     displayCity.innerHTML = '';
     displayTemp.innerHTML = '';
     console.log(err);
   }
 }
+
+userInput.addEventListener('keyup', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    getCityCoords();
+  }
+});
